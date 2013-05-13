@@ -16,6 +16,8 @@ function Create-AppPool-And-Website {
     $website.LogFile.LogExtFileFlags = "Date,Time,ClientIP, UserName, SiteName, ComputerName, ServerIP, Method, UriStem, UriQuery, HttpStatus, Win32Status, BytesSent, BytesRecv, TimeTaken, ServerPort, UserAgent, Cookie, Referer, ProtocolVersion, Host, HttpSubStatus"
 
     $website | Set-Item
+
+    Remove-All-Bindings $websiteName
 }
 
 function Create-AppPool {
