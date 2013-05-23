@@ -23,33 +23,31 @@ function Create-Replace-Or-Delete-Node {
     }
 }
 
+#sets the value of all eRecruiter connectionstrings in all ConnectionStrings.config files in all subdirectories
 function Set-ConnectionString-Recursive {
     param($connectionString, $rootDir)
 
-    if ($rootDir -eq $NULL) {
-        $rootDir =  (split-path -parent $MyInvocation.MyCommand.Definition)
-    }
-
-	if ((Test-Path $rootDir) -eq $true) {
-		$rootDir | Get-ChildItem -r -include ConnectionStrings.config | ForEach-Object {
-			[XML]$xml = Get-Content $_.FullName
-			Create-Replace-Or-Delete-Node $xml "add" "name" "ePunkt.Properties.Settings.ConnectionString" "connectionString" $connectionString
-			$xml.Save($_.FullName)
-		}
-	}
+    Set-Setting-Recursive "ePunkt.Properties.Settings.ConnectionString" $connectionString "name" "connectionString" "ConnectionStrings.config" $rootDir
 }
 
+#sets the value of a eRecruiter setting in all AppSettings.config files in all subdirectories
 function Set-AppSetting-Recursive {
     param($key, $value, $rootDir) 
+
+    Set-Setting-Recursive $key $value "key" "value" "AppSettings.config" $rootDir
+}
+
+function Set-Setting-Recursive {
+    param($key, $value, $keyAttribute, $valueAttribute, $fileName, $rootDir) 
 
     if ($rootDir -eq $NULL -or $rootDir -eq "") {
         $rootDir =  (split-path -parent $MyInvocation.MyCommand.Definition)
     }
 
-	if ((Test-Path $rootDir) -eq $true) {
-		$rootDir | Get-ChildItem -r -include AppSettings.config | ForEach-Object {
+	if ($rootDir -eq "" -or (Test-Path $rootDir) -eq $true) {
+		$rootDir | Get-ChildItem -r -include $fileName | ForEach-Object {
 			[XML]$xml = Get-Content $_.FullName
-			Create-Replace-Or-Delete-Node $xml "add" "key" $key "value" $value
+			Create-Replace-Or-Delete-Node $xml "add" $keyAttribute $key $valueAttribute $value
 			$xml.Save($_.FullName)
 		}
 	}
@@ -74,10 +72,10 @@ function Create-Empty-ConnectionStrings-If-Not-Exists {
 function Create-File-If-Not-Exists {
     param([string]$path, [string]$content)
 
-    if ((Test-Path $path) -eq $false) {
-        if ((Test-Path [System.IO.Path]::GetDirectoryName($path)) -eq $true) {
-			$content | out-file ($path)
-		}
+    if ((Test-Path ([System.IO.Path]::GetDirectoryName($path))) -eq $true) {
+        if ((Test-Path $path) -eq $false) {
+            $content | out-file ($path)
+        }
     }
 
     $null
