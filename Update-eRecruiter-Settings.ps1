@@ -73,8 +73,9 @@ function Create-File-If-Not-Exists {
     param([string]$path, [string]$content)
 
     if ((Test-Path $path) -eq $false) {
+		#only create the file when the directory exists
         if ((Test-Path [System.IO.Path]::GetDirectoryName($path)) -eq $false) {
-            New-Item -ItemType directory -Path $directory
+            return
         }
 
         $content | out-file ($path)
