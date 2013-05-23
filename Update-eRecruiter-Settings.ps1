@@ -30,11 +30,13 @@ function Set-ConnectionString-Recursive {
         $rootDir =  (split-path -parent $MyInvocation.MyCommand.Definition)
     }
 
-    $rootDir | Get-ChildItem -r -include ConnectionStrings.config | ForEach-Object {
-        [XML]$xml = Get-Content $_.FullName
-        Create-Replace-Or-Delete-Node $xml "add" "name" "ePunkt.Properties.Settings.ConnectionString" "connectionString" $connectionString
-        $xml.Save($_.FullName)
-    }
+	if ((Test-Path $rootDir) -eq $true) {
+		$rootDir | Get-ChildItem -r -include ConnectionStrings.config | ForEach-Object {
+			[XML]$xml = Get-Content $_.FullName
+			Create-Replace-Or-Delete-Node $xml "add" "name" "ePunkt.Properties.Settings.ConnectionString" "connectionString" $connectionString
+			$xml.Save($_.FullName)
+		}
+	}
 }
 
 function Set-AppSetting-Recursive {
@@ -44,13 +46,13 @@ function Set-AppSetting-Recursive {
         $rootDir =  (split-path -parent $MyInvocation.MyCommand.Definition)
     }
 
-    $rootDir | Get-ChildItem -r -include AppSettings.config | ForEach-Object {
-        [XML]$xml = Get-Content $_.FullName
-        Create-Replace-Or-Delete-Node $xml "add" "key" $key "value" $value
-        $xml.Save($_.FullName)
-    }
-
-    $null
+	if ((Test-Path $rootDir) -eq $true) {
+		$rootDir | Get-ChildItem -r -include AppSettings.config | ForEach-Object {
+			[XML]$xml = Get-Content $_.FullName
+			Create-Replace-Or-Delete-Node $xml "add" "key" $key "value" $value
+			$xml.Save($_.FullName)
+		}
+	}
 }
 
 
@@ -73,12 +75,9 @@ function Create-File-If-Not-Exists {
     param([string]$path, [string]$content)
 
     if ((Test-Path $path) -eq $false) {
-		#only create the file when the directory exists
-        if ((Test-Path [System.IO.Path]::GetDirectoryName($path)) -eq $false) {
-            return
-        }
-
-        $content | out-file ($path)
+        if ((Test-Path [System.IO.Path]::GetDirectoryName($path)) -eq $true) {
+			$content | out-file ($path)
+		}
     }
 
     $null
