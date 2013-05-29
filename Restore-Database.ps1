@@ -1,5 +1,6 @@
 [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.SqlServer.SMO') | out-null 
 [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.SqlServer.SmoExtended') | out-null
+[System.Reflection.Assembly]::LoadWithPartialName('Microsoft.SqlServer.ConnectionInfo') | out-null
 
 function Restore-Database {
     param($servername, $backupFile, $newDatabaseName)
@@ -74,4 +75,22 @@ function Add-WindowsUser-To-Database {
     Write-Host "Granting the user db_owner rights ..."
     $role = $database.Roles["db_owner"]
     $role.AddMember($userName)
+}
+
+function Drop-Database {
+    param($servername, $databasename)
+
+    $server = New-Object("Microsoft.SqlServer.Management.Smo.Server") $connection 
+    $server.KillAllProcesses($databasename)
+    $server.Databases[$databasename].drop()
+}
+
+function Drop-And-Restore-Database {
+    param($servername, $backupFile, $newDatabaseName)
+
+    Write-Host "Dropping database $newDatabaseName ..."
+    Drop-Database $servername $newDatabaseName
+
+    Write-Host "Restoring database $newDatabaseName ..."
+    Restore-Database $servername $backupFile $newDatabaseName
 }
