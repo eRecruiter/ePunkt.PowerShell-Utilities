@@ -1,5 +1,5 @@
 ﻿#include dependencies directly from GitHub
-#iex (New-Object System.Net.WebClient).DownloadString("https://raw.github.com/saxx/ePunkt.PowerShell-Utilities/master/Set-NetworkAdapter-Configuration.ps1")
+iex (New-Object System.Net.WebClient).DownloadString("https://raw.github.com/saxx/ePunkt.PowerShell-Utilities/master/Set-NetworkAdapter-Configuration.ps1")
 
 $subnet = "255.255.255.0"
 $ips = @("192.168.1.1", "192.168.1.2", "192.168.1.3")
