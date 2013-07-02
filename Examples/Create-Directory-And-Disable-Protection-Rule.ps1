@@ -15,6 +15,10 @@ $cronWorker = "CronWorker\"
 
 Create-Directory-And-Disable-Protection-Rule($DirectoryPath)
 
+Set-Read-Rights-For-User $DirectoryPath "Domain\user"
+Set-Read-Modify-Rights-For-User $DirectoryPath "Domain\user"
+Set-FullControl-For-Users $DirectoryPath @("Domain\user" , "Domain\user2")
+
 Create-Directory-And-Disable-Protection-Rule($DirectoryPath + $bin + $eRecruiter)
 Create-Directory-And-Disable-Protection-Rule($DirectoryPath + $bin + $portal)
 Create-Directory-And-Disable-Protection-Rule($DirectoryPath + $bin + $companyPortal)
