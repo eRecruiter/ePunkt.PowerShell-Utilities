@@ -21,7 +21,7 @@ function Create-Directory-And-Disable-Protection-Rule {
 
 ##  Modifying the access rights for one user 
 
-function Remove-All-Access-Rule-For-User {
+function Remove-All-Access-Rules-For-User {
     param($directoryPath, $user)
 
     $objACL = Get-Acl $directoryPath
@@ -92,12 +92,29 @@ function Set-Write-Rights-For-User {
 }
 
 
-function Set-Read-Modify-Rights-For-User {
+function Set-Modify-Rights-For-User {
     param($directoryPath, $user)
 
     $objACL = Get-Acl $directoryPath
 
     $colRights = [System.Security.AccessControl.FileSystemRights]"Modify"
+    $InheritanceFlag = [System.Security.AccessControl.InheritanceFlags]::None 
+    $PropagationFlag = [System.Security.AccessControl.PropagationFlags]::None 
+    $objType =[System.Security.AccessControl.AccessControlType]::Allow 
+
+    $objUser = New-Object System.Security.Principal.NTAccount($user) 
+    $objACE = New-Object System.Security.AccessControl.FileSystemAccessRule($objUser, $colRights, $InheritanceFlag, $PropagationFlag, $objType) 
+    $objACL.AddAccessRule($objACE) 
+
+    Set-Acl $directoryPath $objACL
+}
+
+function Set-Read-Write-Modify-Rights-For-User {
+    param($directoryPath, $user)
+
+    $objACL = Get-Acl $directoryPath
+
+    $colRights = [System.Security.AccessControl.FileSystemRights]"Read, Write, Modify"
     $InheritanceFlag = [System.Security.AccessControl.InheritanceFlags]::None 
     $PropagationFlag = [System.Security.AccessControl.PropagationFlags]::None 
     $objType =[System.Security.AccessControl.AccessControlType]::Allow 
