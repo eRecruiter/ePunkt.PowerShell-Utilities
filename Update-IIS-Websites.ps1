@@ -67,6 +67,7 @@ function Set-Http-Binding {
 function Set-Https-Binding {
     param ($websiteName, $ip, $hostHeader, $certificate)
 
+	$certificate = $certificate -replace " " ""
     if ($null -ne (Get-WebBinding | where-object {$_.bindinginformation -eq ($ip + ":443:" + $hostHeader)})) {
         Remove-WebBinding -Name $websiteName -IP $ip -Port 443 -Protocol https -HostHeader $hostHeader
     }
