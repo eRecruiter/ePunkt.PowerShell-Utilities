@@ -2,7 +2,7 @@
     param($directoryPath)
 
     $objACL = Get-Acl $directoryPath
-    $objACL.SetAccessRuleProtection($True, $True)
+    $objACL.SetAccessRuleProtection($True, $False)
    
     Set-Acl $directoryPath $objACL
 }
