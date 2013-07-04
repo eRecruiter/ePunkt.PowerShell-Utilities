@@ -3,14 +3,17 @@
 
     $objACL = Get-Acl $directoryPath
     $objACL.SetAccessRuleProtection($True, $True)
+   
     Set-Acl $directoryPath $objACL
 }
+
 
 function Create-Directory {
     param($directoryPath)
 
     New-Item -Path $directoryPath -ItemType directory
 }
+
 
 function Create-Directory-And-Disable-Protection-Rule {
     param($directoryPath)
@@ -21,109 +24,71 @@ function Create-Directory-And-Disable-Protection-Rule {
 
 ##  Modifying the access rights for one user 
 
-function Remove-All-Access-Rules-For-User {
-    param($directoryPath, $user)
-
-    $objACL = Get-Acl $directoryPath
-
-    $colRights = [System.Security.AccessControl.FileSystemRights]"Read"
-    $InheritanceFlag = [System.Security.AccessControl.InheritanceFlags]::None 
-    $PropagationFlag = [System.Security.AccessControl.PropagationFlags]::None 
-    $objType =[System.Security.AccessControl.AccessControlType]::Allow 
-    
-    $objUser = New-Object System.Security.Principal.NTAccount($user) 
-    $objACE = New-Object System.Security.AccessControl.FileSystemAccessRule($objUser, $colRights, $InheritanceFlag, $PropagationFlag, $objType) 
-    $objACL.RemoveAccessRuleAll($objACE) 
-
-    Set-Acl $directoryPath $objACL
-}
-
-
 function Set-FullControl-For-User {
-    param($directoryPath, $user)
+    param($directoryPath, $account)
 
-    $objACL = Get-Acl $directoryPath
+    $acl = Get-Acl $directoryPath
 
-    $colRights = [System.Security.AccessControl.FileSystemRights]"FullControl"
-    $InheritanceFlag = [System.Security.AccessControl.InheritanceFlags]::None 
-    $PropagationFlag = [System.Security.AccessControl.PropagationFlags]::None 
-    $objType =[System.Security.AccessControl.AccessControlType]::Allow 
+    $rights=[System.Security.AccessControl.FileSystemRights]::FullControl
+    $inheritance=[System.Security.AccessControl.InheritanceFlags]"ContainerInherit,ObjectInherit"
+    $propagation=[System.Security.AccessControl.PropagationFlags]::None
+    $allowdeny=[System.Security.AccessControl.AccessControlType]::Allow
 
-    $objUser = New-Object System.Security.Principal.NTAccount($user) 
-    $objACE = New-Object System.Security.AccessControl.FileSystemAccessRule($objUser, $colRights, $InheritanceFlag, $PropagationFlag, $objType) 
-    $objACL.AddAccessRule($objACE) 
+    $dirACE = New-Object System.Security.AccessControl.FileSystemAccessRule ($account,$rights,$inheritance,$propagation,$allowdeny)
+    $acl.AddAccessRule($dirACE)
 
-    Set-Acl $directoryPath $objACL
+    Set-Acl -aclobject $acl -Path $directoryPath
 }
+
 
 function Set-Read-Rights-For-User {
-    param($directoryPath, $user)
+    param($directoryPath, $account)
 
-    $objACL = Get-Acl $directoryPath
+    $acl = Get-Acl $directoryPath
 
-    $colRights = [System.Security.AccessControl.FileSystemRights]"Read"
-    $InheritanceFlag = [System.Security.AccessControl.InheritanceFlags]::None 
-    $PropagationFlag = [System.Security.AccessControl.PropagationFlags]::None 
-    $objType =[System.Security.AccessControl.AccessControlType]::Allow 
-    
-    $objUser = New-Object System.Security.Principal.NTAccount($user) 
-    $objACE = New-Object System.Security.AccessControl.FileSystemAccessRule($objUser, $colRights, $InheritanceFlag, $PropagationFlag, $objType) 
-    $objACL.AddAccessRule($objACE) 
+    $rights=[System.Security.AccessControl.FileSystemRights]::Read
+    $inheritance=[System.Security.AccessControl.InheritanceFlags]"ContainerInherit,ObjectInherit"
+    $propagation=[System.Security.AccessControl.PropagationFlags]::None
+    $allowdeny=[System.Security.AccessControl.AccessControlType]::Allow
 
-    Set-Acl $directoryPath $objACL
+    $dirACE = New-Object System.Security.AccessControl.FileSystemAccessRule ($account,$rights,$inheritance,$propagation,$allowdeny)
+    $acl.AddAccessRule($dirACE)
+
+    Set-Acl -aclobject $acl -Path $directoryPath    
 }
 
 
 function Set-Write-Rights-For-User {
-    param($directoryPath, $user)
+    param($directoryPath, $account)
 
-    $objACL = Get-Acl $directoryPath
+    $acl = Get-Acl $directoryPath
 
-    $colRights = [System.Security.AccessControl.FileSystemRights]"Write"
-    $InheritanceFlag = [System.Security.AccessControl.InheritanceFlags]::None 
-    $PropagationFlag = [System.Security.AccessControl.PropagationFlags]::None 
-    $objType =[System.Security.AccessControl.AccessControlType]::Allow 
-    
-    $objUser = New-Object System.Security.Principal.NTAccount($user) 
-    $objACE = New-Object System.Security.AccessControl.FileSystemAccessRule($objUser, $colRights, $InheritanceFlag, $PropagationFlag, $objType) 
-    $objACL.AddAccessRule($objACE) 
+    $rights=[System.Security.AccessControl.FileSystemRights]::Write
+    $inheritance=[System.Security.AccessControl.InheritanceFlags]"ContainerInherit,ObjectInherit"
+    $propagation=[System.Security.AccessControl.PropagationFlags]::None
+    $allowdeny=[System.Security.AccessControl.AccessControlType]::Allow
 
-    Set-Acl $directoryPath $objACL
+    $dirACE = New-Object System.Security.AccessControl.FileSystemAccessRule ($account,$rights,$inheritance,$propagation,$allowdeny)
+    $acl.AddAccessRule($dirACE)
+
+    Set-Acl -aclobject $acl -Path $directoryPath    
 }
 
 
 function Set-Modify-Rights-For-User {
-    param($directoryPath, $user)
+    param($directoryPath, $account)
 
-    $objACL = Get-Acl $directoryPath
+    $acl = Get-Acl $directoryPath
 
-    $colRights = [System.Security.AccessControl.FileSystemRights]"Modify"
-    $InheritanceFlag = [System.Security.AccessControl.InheritanceFlags]::None 
-    $PropagationFlag = [System.Security.AccessControl.PropagationFlags]::None 
-    $objType =[System.Security.AccessControl.AccessControlType]::Allow 
+    $rights=[System.Security.AccessControl.FileSystemRights]::Modify
+    $inheritance=[System.Security.AccessControl.InheritanceFlags]"ContainerInherit,ObjectInherit"
+    $propagation=[System.Security.AccessControl.PropagationFlags]::None
+    $allowdeny=[System.Security.AccessControl.AccessControlType]::Allow
 
-    $objUser = New-Object System.Security.Principal.NTAccount($user) 
-    $objACE = New-Object System.Security.AccessControl.FileSystemAccessRule($objUser, $colRights, $InheritanceFlag, $PropagationFlag, $objType) 
-    $objACL.AddAccessRule($objACE) 
+    $dirACE = New-Object System.Security.AccessControl.FileSystemAccessRule ($account,$rights,$inheritance,$propagation,$allowdeny)
+    $acl.AddAccessRule($dirACE)
 
-    Set-Acl $directoryPath $objACL
-}
-
-function Set-Read-Write-Modify-Rights-For-User {
-    param($directoryPath, $user)
-
-    $objACL = Get-Acl $directoryPath
-
-    $colRights = [System.Security.AccessControl.FileSystemRights]"Read, Write, Modify"
-    $InheritanceFlag = [System.Security.AccessControl.InheritanceFlags]::None 
-    $PropagationFlag = [System.Security.AccessControl.PropagationFlags]::None 
-    $objType =[System.Security.AccessControl.AccessControlType]::Allow 
-
-    $objUser = New-Object System.Security.Principal.NTAccount($user) 
-    $objACE = New-Object System.Security.AccessControl.FileSystemAccessRule($objUser, $colRights, $InheritanceFlag, $PropagationFlag, $objType) 
-    $objACL.AddAccessRule($objACE) 
-
-    Set-Acl $directoryPath $objACL
+    Set-Acl -aclobject $acl -Path $directoryPath 
 }
 
 ## Functions for multiple users
@@ -161,6 +126,7 @@ function Set-Write-Rights-For-Users {
         Set-Write-Rights-For-User $directoryPath $user
     }
 }
+
 
 function Set-Modify-Rights-For-Users {
     param($directoryPath, $users)
