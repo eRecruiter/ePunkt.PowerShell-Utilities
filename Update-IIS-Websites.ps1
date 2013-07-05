@@ -9,9 +9,9 @@ function Create-AppPool-And-Website {
         Remove-Item IIS:\Sites\$websiteName -Recurse
     }
     New-Item IIS:\Sites\$websiteName -Bindings @{protocol="http";bindingInformation="*:80:"} -PhysicalPath $path
+    Set-ItemProperty IIS:\Sites\$websiteName -name applicationPool -value $websiteName
 
     $website = Get-Item IIS:\Sites\$websiteName
-    $website.ApplicationPool = $websiteName
     $website.LogFile.Directory = $logPath
     $website.LogFile.LogExtFileFlags = "Date,Time,ClientIP, UserName, SiteName, ComputerName, ServerIP, Method, UriStem, UriQuery, HttpStatus, Win32Status, BytesSent, BytesRecv, TimeTaken, ServerPort, UserAgent, Cookie, Referer, ProtocolVersion, Host, HttpSubStatus"
 
