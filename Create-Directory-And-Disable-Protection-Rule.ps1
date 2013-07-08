@@ -11,7 +11,11 @@
 function Create-Directory {
     param($directoryPath)
 
-    New-Item -Path $directoryPath -ItemType directory
+    $checkPath = Test-Path $directoryPath
+
+    if($checkPath -eq $false) {
+        New-Item -Path $directoryPath -ItemType directory
+    }
 }
 
 
