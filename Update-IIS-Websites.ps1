@@ -9,9 +9,9 @@ function Create-AppPool-And-Website {
         Remove-Item IIS:\Sites\$websiteName -Recurse
     }
     New-Item IIS:\Sites\$websiteName -Bindings @{protocol="http";bindingInformation="*:80:"} -PhysicalPath $path
+    Set-ItemProperty IIS:\Sites\$websiteName -name applicationPool -value $websiteName
 
     $website = Get-Item IIS:\Sites\$websiteName
-    $website.ApplicationPool = $websiteName
     $website.LogFile.Directory = $logPath
     $website.LogFile.LogExtFileFlags = "Date,Time,ClientIP, UserName, SiteName, ComputerName, ServerIP, Method, UriStem, UriQuery, HttpStatus, Win32Status, BytesSent, BytesRecv, TimeTaken, ServerPort, UserAgent, Cookie, Referer, ProtocolVersion, Host, HttpSubStatus"
 
@@ -67,6 +67,7 @@ function Set-Http-Binding {
 function Set-Https-Binding {
     param ($websiteName, $ip, $hostHeader, $certificate)
 
+	$certificate = $certificate -replace " ", ""
     if ($null -ne (Get-WebBinding | where-object {$_.bindinginformation -eq ($ip + ":443:" + $hostHeader)})) {
         Remove-WebBinding -Name $websiteName -IP $ip -Port 443 -Protocol https -HostHeader $hostHeader
     }
