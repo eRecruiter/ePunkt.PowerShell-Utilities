@@ -1,5 +1,6 @@
 ﻿#include dependencies directly from GitHub
-iex (New-Object System.Net.WebClient).DownloadString("https://raw.github.com/smidi/ePunkt.PowerShell-Utilities/master/Create-Directory-And-Disable-Protection-Rule.ps1")
+iex (New-Object System.Net.WebClient).DownloadString("https://raw.github.com/saxx/ePunkt.PowerShell-Utilities/master/Create-Directory-And-Disable-Protection-Rule.ps1")
+iex (New-Object System.Net.WebClient).DownloadString("https://raw.github.com/saxx/ePunkt.PowerShell-Utilities/master/Create-Share.ps1")
 
 $DirectoryPath = "c:\Applications\"
 
@@ -26,3 +27,9 @@ Create-Directory-And-Disable-Protection-Rule($DirectoryPath + $bin + $cronWorker
 
 Create-Directory-And-Disable-Protection-Rule($DirectoryPath + $log)
 Create-Directory-And-Disable-Protection-Rule($DirectoryPath + $temp)
+
+$users = "User"
+$domain = "Domain"
+$shareRight = $SHARE_CHANGE, $SHARE_READ
+
+Create-Share $Sharename $DirectoryPath "Sharing Application" $users $shareRight $domain
