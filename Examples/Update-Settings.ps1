@@ -8,7 +8,7 @@
 
 
 #include dependencies directly from GitHub
-iex (New-Object System.Net.WebClient).DownloadString("https://raw.github.com/saxx/ePunkt.PowerShell-Utilities/master/Download-Dependencies.ps1")
+iex (New-Object System.Net.WebClient).DownloadString("https://raw.github.com/saxx/ePunkt.PowerShell-Utilities/master/Update-eRecruiter-Settings.ps1")
 
 
 #create or update the connectionstring to the database
@@ -29,12 +29,14 @@ Create-Empty-AppSettings-If-Not-Exists ".\Portal"
 Set-AppSetting-Recursive "WebBasePath" "c:\eRecruiter\Bin\eRecruiter"
 Set-AppSetting-Recursive "WindowsFileManager_FilesPath" "c:\eRecruiter\Files\Files"
 Set-AppSetting-Recursive "WindowsFileManager_TemplatesPath" "c:\eRecruiter\Files\Templates"
+Set-AppSetting-Recursive "TemporaryFileManager_Path" "c:\eRecruiter\Temp"
 
 Set-AppSetting-Recursive "SmtpHost" "localhost"
 Set-AppSetting-Recursive "SmtpPort" "25"
 Set-AppSetting-Recursive "SmtpUserName" ""
 Set-AppSetting-Recursive "SmtpPassword" ""
 Set-AppSetting-Recursive "SmtpUseSsl" "false"
+Set-AppSetting-Recursive "SmtpSender" "support@epunkt.net"
 
 Set-AppSetting-Recursive "EnableCaching" "false"
 Set-AppSetting-Recursive "CacheExpiration" "0"

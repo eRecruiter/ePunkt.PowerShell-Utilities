@@ -1,13 +1,19 @@
 Import-Module WebAdministration
 
+function Delete-Website-If-Exists {
+	param($websiteName)
+	
+	If (Test-Path IIS:\Sites\$websiteName) {
+        Remove-Item IIS:\Sites\$websiteName -Recurse
+    }
+}
+
 function Create-AppPool-And-Website {
     param($websiteName, $path, $logPath, $username, $password)
 
     Create-AppPool $websiteName $userName $password
 
-    If (Test-Path IIS:\Sites\$websiteName) {
-        Remove-Item IIS:\Sites\$websiteName -Recurse
-    }
+	Delete-Website-If-Exists $websiteName
     New-Item IIS:\Sites\$websiteName -Bindings @{protocol="http";bindingInformation="*:80:"} -PhysicalPath $path
     Set-ItemProperty IIS:\Sites\$websiteName -name applicationPool -value $websiteName
 
