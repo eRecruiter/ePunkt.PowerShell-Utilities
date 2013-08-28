@@ -87,7 +87,10 @@ function Drop-Database {
 	catch {
 		#do nothing here
 	}
-    $server.Databases[$databasename].drop()
+	
+	if ($server.Databases[$databasename] -ne $NULL) {
+		$server.Databases[$databasename].drop()
+	}
 }
 
 function Drop-And-Restore-Database {
