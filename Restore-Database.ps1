@@ -3,7 +3,7 @@
 [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.SqlServer.ConnectionInfo') | out-null
 
 function Restore-Database {
-    param($servername, $backupFile, $newDatabaseName)
+    param($servername, $backupFile, $newDatabaseName, $newDatabasePath)
 
     Write-Host "Connecting to server ..."
     $connection = New-Object("Microsoft.SqlServer.Management.Common.ServerConnection") $servername
@@ -22,6 +22,13 @@ function Restore-Database {
 
     $dbRestore.Database = $newDatabaseName
 
+    # if we don't have a path specified, lets use the default path for user databases
+    if ([System.String]::IsNullOrEmpty($newDatabasePath) -eq $true) {
+        $newDatabasePath = $server.Settings.DefaultFile
+    }
+    $newDatabasePath = $newDatabasePath.Trim('\\')
+
+
     Write-Host "Configuring logical files..."
 
     $data_files = $dbRestore.ReadFileList($server)
@@ -32,10 +39,10 @@ function Restore-Database {
         $restore_data.LogicalFileName = $logical_name
 
         if ($data_row.Type -eq "D") {
-            $restore_data.PhysicalFileName = $server.Information.MasterDBPath + "\" + $dbRestore.Database + ".mdf"
+            $restore_data.PhysicalFileName = $newDatabasePath + "\" + $dbRestore.Database + ".mdf"
         }
         else {
-            $restore_data.PhysicalFileName = $server.Information.MasterDBLogPath + "\" + $dbRestore.Database + ".ldf"
+            $restore_data.PhysicalFileName = $newDatabasePath + "\" + $dbRestore.Database + ".ldf"
         }
 
         [Void]$dbRestore.RelocateFiles.Add($restore_data)
@@ -94,11 +101,11 @@ function Drop-Database {
 }
 
 function Drop-And-Restore-Database {
-    param($servername, $backupFile, $newDatabaseName)
+    param($servername, $backupFile, $newDatabaseName, $newDatabasePath)
 
     Write-Host "Dropping database $newDatabaseName ..."
     Drop-Database $servername $newDatabaseName
 
     Write-Host "Restoring database $newDatabaseName ..."
-    Restore-Database $servername $backupFile $newDatabaseName
+    Restore-Database $servername $backupFile $newDatabaseName $newDatabasePath
 }
