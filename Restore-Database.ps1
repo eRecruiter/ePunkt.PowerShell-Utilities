@@ -88,15 +88,10 @@ function Drop-Database {
     param($servername, $databasename)
 
     $server = New-Object("Microsoft.SqlServer.Management.Smo.Server") $connection 
-	try {
-		$server.KillAllProcesses($databasename)
-	}
-	catch {
-		#do nothing here
-	}
-	
+
 	if ($server.Databases[$databasename] -ne $NULL) {
-		$server.Databases[$databasename].drop()
+		$srv.KillAllProcesses($databasename)
+		$srv.KillDatabase($databasename)
 	}
 }
 
