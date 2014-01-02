@@ -87,12 +87,17 @@ function Add-WindowsUser-To-Database {
 function Drop-Database {
     param($servername, $databasename)
 
-    $server = New-Object("Microsoft.SqlServer.Management.Smo.Server") $connection 
+    $server = New-Object("Microsoft.SqlServer.Management.Smo.Server") $servername 
+    $database = $server.Databases[$databasename]
 
-	if ($server.Databases[$databasename] -ne $NULL) {
-		$srv.KillAllProcesses($databasename)
-		$srv.KillDatabase($databasename)
-	}
+    if ($database) {
+        Write-Host "Killing database $databasename ... "
+        $server.KillDatabase($databasename)
+        Write-Host "Database killed."
+    }
+    else {
+        Write-Host "Databse $databasename not found on $servername."
+    }
 }
 
 function Drop-And-Restore-Database {
