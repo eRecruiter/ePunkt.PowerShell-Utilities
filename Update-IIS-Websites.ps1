@@ -49,7 +49,8 @@ function Set-Ssl-Certificate {
         (Get-WebBinding -Name $websiteName -Protocol https).AddSslCertificate($certificate, "WebHosting")
     }
     catch {
-        Write-Host ("Unable to set certificate for " + $websiteName + ".")
+        Write-Host ("Unable to set certificate for " + $websiteName + ":")
+        Write-Host ($_.Exception.ToString())
     }
 }
 
