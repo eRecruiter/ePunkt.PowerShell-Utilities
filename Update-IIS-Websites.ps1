@@ -1,9 +1,9 @@
 Import-Module WebAdministration
 
 function Delete-Website-If-Exists {
-	param($websiteName)
+    param($websiteName)
 	
-	If (Test-Path IIS:\Sites\$websiteName) {
+    If (Test-Path IIS:\Sites\$websiteName) {
         Remove-Item IIS:\Sites\$websiteName -Recurse
     }
 }
@@ -13,7 +13,7 @@ function Create-AppPool-And-Website {
 
     Create-AppPool $websiteName $userName $password
 
-	Delete-Website-If-Exists $websiteName
+    Delete-Website-If-Exists $websiteName
     New-Item IIS:\Sites\$websiteName -Bindings @{protocol="http";bindingInformation="*:80:"} -PhysicalPath $path
     Set-ItemProperty IIS:\Sites\$websiteName -name applicationPool -value $websiteName
 
@@ -45,6 +45,7 @@ function Create-AppPool {
 
 function Set-Ssl-Certificate {
     param($websiteName, $certificate)
+    
     (Get-WebBinding -Name $websiteName -Protocol https).AddSslCertificate($certificate, "WebHosting")
 }
 
