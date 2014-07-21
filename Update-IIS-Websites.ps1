@@ -44,10 +44,10 @@ function Create-AppPool {
 }
 
 function Set-Ssl-Certificate {
-    param($websiteName, $certificate)
+    param($websiteName, $ip, $hostHeader, $certificate)
     
     try {
-        (Get-WebBinding -Name $websiteName -Protocol https).AddSslCertificate($certificate, "WebHosting")
+        (Get-WebBinding -Name $websiteName -IPAddress $ip -HostHeader $hostHeader -Protocol https).AddSslCertificate($certificate, "WebHosting")
     }
     catch {
     	Write-Host ("Unable to set certificate " + $certificate + " for " + $websiteName + ": " + $_.Exception.Message)
@@ -78,7 +78,7 @@ function Set-Https-Binding {
         Remove-WebBinding -Name $websiteName -IP $ip -Port 443 -Protocol https -HostHeader $hostHeader
     }
     New-WebBinding -Name $websiteName -IP $ip -Port 443 -Protocol https -HostHeader $hostHeader
-    Set-Ssl-Certificate $websiteName $certificate
+    Set-Ssl-Certificate $websiteName $ip $hostHeader $certificate
 }
 
 function Set-Http-And-Https-Binding {
